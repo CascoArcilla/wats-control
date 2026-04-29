@@ -27,6 +27,7 @@ CREATE TABLE Meter (
   id           int NOT NULL AUTO_INCREMENT, 
   number_meter int NOT NULL, 
   owner_meter  int NOT NULL,
+  status_meter varchar(60) DEFAULT 'active' NOT NULL,
   PRIMARY KEY (id));
 
 CREATE TABLE `User` (
@@ -39,6 +40,11 @@ CREATE TABLE `User` (
   is_bloked boolean DEFAULT false NOT NULL,
   use_password boolean DEFAULT false NOT NULL,
   PRIMARY KEY (id));
+
+CREATE TABLE User_meters (
+  userid  int NOT NULL, 
+  meterid int NOT NULL, 
+  PRIMARY KEY (userid, meterid));
 
 CREATE TABLE User_tokens (
   id         int NOT NULL AUTO_INCREMENT, 
@@ -63,3 +69,5 @@ ALTER TABLE Meter ADD CONSTRAINT FKMeter49177 FOREIGN KEY (owner_meter) REFERENC
 ALTER TABLE Measure ADD CONSTRAINT FKMeasure817271 FOREIGN KEY (take_by) REFERENCES `User` (id);
 ALTER TABLE Users_groups ADD CONSTRAINT FKUsers_grou7924 FOREIGN KEY (groupid) REFERENCES `Group` (id);
 ALTER TABLE Users_groups ADD CONSTRAINT FKUsers_grou898823 FOREIGN KEY (userid) REFERENCES `User` (id);
+ALTER TABLE User_meters ADD CONSTRAINT FKUser_meters123456 FOREIGN KEY (userid) REFERENCES `User` (id);
+ALTER TABLE User_meters ADD CONSTRAINT FKUser_meters654321 FOREIGN KEY (meterid) REFERENCES Meter (id);

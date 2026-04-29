@@ -1,38 +1,18 @@
 # Eletrican Control
 
 ## Descripción
-Es un proyecto personal para llevar el control del consumo de KW/h, está pensado para ser usado por miembros de una familia para administrar el consumo de KW/h de sus medidores de luz.
+Es un proyecto personal para llevar el control del consumo de KW/h y el pago del servicio de luz, está pensado para ser usado por miembros de una familia para administrar el consumo de KW/h de sus medidores de luz. El modelo de entidad relacion podra cambiar a lo largo del desarrollo y por ende algunos aspectos de la aplicación tambien pueden cambiar.
 
-## Caracteristicas:
+## Features
+- [x] Autenticación
+- [x] Gestión de medidores (el medidor pertenece a un usuario propietario, puede ser seleccionado por el admin)
+- [x] Gestión de clientes (usuarios)
+- [x] Gestión de consumos (el consumo es registrado por el usuario en base a un medidor asociado)
+- [x] Generación de facturas (estimadas en base a los consumos registrados)
+- [x] Historial de consumos (lista de consumos registrados, filtros por fecha y por medidor)
+- [x] Revisar consumo por día segun el consumo del día anterior (tiene que ser un cálculo basado en la diferencia de los últimos consumos registrados)
 
-- Login
-- Gestión de medidores (registro, edición y eliminación)
-- Gestión de clientes (registro, edición y eliminación)
-- Gestión de consumos (registro, edición y eliminación)
-- Generación de facturas (a partir de una fecha hasta otra fecha o del mes en curso)
-- Historial de consumos
-- Revisar consumo por día segun el consumo del día anterior
-
-## Grupo de Usuarios
-
-- Medidor:
-  - Puede ver medidores y consumos
-  - Puede ver facturas
-  - Puede ver historial de consumo
-  - Puede ver consumo del día
-  - Puede registrar consumos
-  - Puede actualizar consumos que solo sean suyos
-  - Puede eliminar consumos que solo sean suyos
-
-- Admin, además de los permisos de medidor:
-  - Puede gestionar medidores (registro, edición y eliminación)
-  - Puede gestionar clientes (registro, edición y eliminación)
-  - Puede gestionar consumos (registro, edición y eliminación)
-  - Puede generar facturas
-  - Puede ver historial de consumos
-  - Puede ver consumo del día
-
-## Tecnologias utilizadas:
+## Tecnologías
 - Node.js
 - Express.js
 - Tailwind CSS

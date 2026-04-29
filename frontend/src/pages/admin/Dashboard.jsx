@@ -2,10 +2,9 @@ import { Users, Zap, TrendingUp, AlertCircle } from 'lucide-react';
 
 export default function AdminDashboard() {
   const stats = [
-    { title: 'Total Usuarios', value: '1,240', icon: Users, color: 'text-light-mint', bg: 'bg-light-mint/10' },
-    { title: 'Total Medidores', value: '450', icon: Zap, color: 'text-medium-green', bg: 'bg-medium-green/10' },
-    { title: 'Consumo Mensual', value: '12,400 kW/h', icon: TrendingUp, color: 'text-med-light-green', bg: 'bg-med-light-green/10' },
-    { title: 'Alertas', value: '3', icon: AlertCircle, color: 'text-red-400', bg: 'bg-red-400/10' },
+    { title: 'Total Usuarios', value: '6', icon: Users, color: 'text-light-mint', bg: 'bg-light-mint/10' },
+    { title: 'Total Medidores', value: '1', icon: Zap, color: 'text-medium-green', bg: 'bg-medium-green/10' },
+    { title: 'Consumo Mensual', value: '501 kW/h', icon: TrendingUp, color: 'text-med-light-green', bg: 'bg-med-light-green/10' },
   ];
 
   return (
@@ -18,7 +17,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (

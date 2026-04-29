@@ -1,0 +1,89 @@
+@startuml data_base_er_diagram
+
+' Configuración visual
+skinparam linetype ortho
+hide circle
+
+entity "User" as user {
+  + id [PK] : int <<auto_increment>>
+  --
+  * name : varchar(255)
+  * lastname : varchar(255)
+  * username : varchar(255) <<unique>>
+  password : varchar(255) <<NULL>>
+  * created : date
+  * is_bloked : boolean = false
+  * use_password : boolean = false
+}
+
+entity "Meter" as meter {
+  + id [PK] : int <<auto_increment>>
+  --
+  * number_meter : int
+  * owner_meter : int <<FK>>
+  * status_meter : varchar(60) = 'active'
+}
+
+entity "Factura" as factura {
+  + id [PK] : int <<auto_increment>>
+  --
+  * estimated_amount : double
+  * watts_consumed : double
+  * created : date
+  * start_date : date
+  * end_date : date
+  * meterid : int <<FK>>
+  * userid : int <<FK>>
+}
+
+entity "Measure" as measure {
+  + id [PK] : int <<auto_increment>>
+  --
+  * watts : int
+  * date_taken : date
+  * take_by : int <<FK>>
+  * meter : int <<FK>>
+}
+
+entity "Group" as group {
+  + id [PK] : int <<auto_increment>>
+  --
+  * name : varchar(255)
+}
+
+entity "User_tokens" as token {
+  + id [PK] : int <<auto_increment>>
+  --
+  * token : text
+  * expires_at : date
+  * created_at : date
+  * is_revoked : boolean = false
+  * userid : int <<FK>>
+}
+
+' Tablas Intermedias (Many-to-Many)
+entity "Users_groups" as user_group {
+  + userid [PK][FK] : int
+  + groupid [PK][FK] : int
+}
+
+entity "User_meters" as user_meter {
+  + userid [PK][FK] : int
+  + meterid [PK][FK] : int
+}
+
+' Relaciones basadas en los ALTER TABLE
+user ||--o{ token
+user ||--o{ factura
+user ||--o{ meter
+user ||--o{ measure
+user ||--o{ user_group
+user ||--o{ user_meter
+
+group ||--o{ user_group
+
+meter ||--o{ factura
+meter ||--o{ measure
+meter ||--o{ user_meter
+
+@enduml

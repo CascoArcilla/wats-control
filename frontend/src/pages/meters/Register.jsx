@@ -7,6 +7,12 @@ export default function RegisterMeter() {
   const [owner, setOwner] = useState('');
   const navigate = useNavigate();
 
+  const users = [
+    { id: 1, name: 'María López' },
+    { id: 2, name: 'Juan Perez' },
+    { id: 3, name: 'Pedro Ramirez' },
+  ]
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // Placeholder logic
@@ -41,16 +47,18 @@ export default function RegisterMeter() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">ID del Propietario (Usuario)</label>
-              <input 
-                type="number" 
+              <label className="block text-sm font-medium text-gray-300 mb-2">Propietario</label>
+              <select
                 value={owner}
                 onChange={(e) => setOwner(e.target.value)}
-                className="input-field" 
-                placeholder="Ej. 1"
+                className="input-field py-1.5"
                 required
-              />
-              <p className="text-xs text-gray-500 mt-2">Introduce el ID del usuario al que pertenece este medidor.</p>
+              >
+                <option value="" className='bg-dark text-white' disabled>Seleccionar</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.name} className='bg-dark text-white'>{user.name}</option>
+                ))}
+              </select>
             </div>
           </div>
 

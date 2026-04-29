@@ -1,13 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Zap, Activity, Shield, LogOut } from 'lucide-react';
+import { Home, Zap, Activity, Shield, LogOut, Clock } from 'lucide-react';
 
 export default function Sidebar() {
   const location = useLocation();
 
   const links = [
     { name: 'Admin Dashboard', path: '/admin', icon: Shield },
-    { name: 'Mis Medidores', path: '/meters', icon: Home },
     { name: 'Registrar Medidor', path: '/meters/register', icon: Zap },
+    { name: 'Medidores', path: '/meters', icon: Clock },
+    { name: 'Consumo de Hoy', path: '/consumptions/today', icon: Home },
     { name: 'Registrar Consumo', path: '/consumptions/register', icon: Activity },
   ];
 

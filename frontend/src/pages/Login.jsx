@@ -10,7 +10,7 @@ export default function Login() {
   const handleLogin = (e) => {
     e.preventDefault();
     // Placeholder login action
-    navigate('/meters');
+    navigate('/consumptions/today');
   };
 
   return (

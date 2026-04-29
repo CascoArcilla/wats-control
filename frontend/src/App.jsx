@@ -5,6 +5,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import MetersMain from './pages/meters/Main';
 import RegisterMeter from './pages/meters/Register';
 import RegisterConsumption from './pages/consumptions/Register';
+import Today from './pages/consumptions/Today';
 
 function App() {
   return (
@@ -14,11 +15,12 @@ function App() {
         
         {/* Protected Routes with Layout */}
         <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/meters" replace />} />
+          <Route index element={<Navigate to="/consumptions/today" replace />} />
           <Route path="admin" element={<AdminDashboard />} />
           <Route path="meters" element={<MetersMain />} />
           <Route path="meters/register" element={<RegisterMeter />} />
           <Route path="consumptions/register" element={<RegisterConsumption />} />
+          <Route path="consumptions/today" element={<Today />} />
         </Route>
       </Routes>
     </Router>
