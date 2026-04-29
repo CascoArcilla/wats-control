@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-darkest: #2C302E;
+  --color-dark: #474A48;
+  --color-gray-green: #909590;
+  --color-light-mint: #9AE19D;
+  --color-medium-green: #537A5A;
+  --color-med-light-green: #638669;
+  --color-light-gray-green: #719177;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-darkest text-gray-100 font-sans antialiased min-h-screen;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-dark/40 backdrop-blur-md border border-gray-green/20 shadow-lg;
+  }
+  .glass-card {
+    @apply bg-dark/40 backdrop-blur-md border border-gray-green/20 shadow-lg rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:border-light-mint/30;
+  }
+  .btn-primary {
+    @apply bg-light-mint text-darkest font-semibold py-2 px-4 rounded-lg transition-colors duration-200 hover:bg-medium-green hover:text-white shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-light-mint/50 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-dark text-light-mint border border-light-mint/50 font-semibold py-2 px-4 rounded-lg transition-colors duration-200 hover:bg-light-mint hover:text-darkest shadow-md focus:outline-none focus:ring-2 focus:ring-light-mint/50;
+  }
+  .input-field {
+    @apply w-full bg-darkest/50 border border-gray-green/30 rounded-lg px-4 py-2.5 text-gray-200 placeholder-gray-500 focus:outline-none focus:border-light-mint focus:ring-1 focus:ring-light-mint transition-colors;
+  }
+}
