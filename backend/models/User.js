@@ -1,48 +1,54 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
-
-const User = sequelize.define('User', {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  lastname: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  created: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: DataTypes.NOW,
-  },
-  is_bloked: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-    field: 'is_bloked'
-  },
-  use_password: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
+'use strict';
+const {
+  Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+  class User extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      User.hasMany(models.Meter, { foreignKey: 'userId' });
+      User.hasMany(models.Bill, { foreignKey: 'userId' });
+      User.hasMany(models.Measure, { foreignKey: 'userId' });
+      User.belongsToMany(models.Group, { through: 'UserGroups', foreignKey: 'userId' });
+      User.belongsToMany(models.Meter, { through: 'UserMeters', foreignKey: 'userId', as: 'AuthorizedMeters' });
+      User.hasMany(models.UserToken, { foreignKey: 'userId' });
+    }
   }
-}, {
-  tableName: 'User',
-  timestamps: false
-});
-
-module.exports = User;
+  User.init({
+    first_name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    last_name: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    is_bloked: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    use_password: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+  }, {
+    sequelize,
+    modelName: 'User',
+  });
+  return User;
+};

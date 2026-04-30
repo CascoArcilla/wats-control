@@ -1,39 +1,42 @@
-const sequelize = require('../config/db');
-const User = require('./User');
-const Meter = require('./Meter');
-const Factura = require('./Factura');
-const Measure = require('./Measure');
-const Group = require('./Group');
-const UserTokens = require('./UserTokens');
+'use strict';
 
-// Relations
-Meter.belongsTo(User, { foreignKey: 'owner_meter', as: 'owner' });
-User.hasMany(Meter, { foreignKey: 'owner_meter', as: 'meters' });
+const fs = require('fs');
+const path = require('path');
+const Sequelize = require('sequelize');
+const process = require('process');
+const basename = path.basename(__filename);
+const config = require(__dirname + '/../config/config.js');
+const db = {};
 
-Factura.belongsTo(Meter, { foreignKey: 'meterid', as: 'meter' });
-Meter.hasMany(Factura, { foreignKey: 'meterid', as: 'facturas' });
+let sequelize;
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
 
-Factura.belongsTo(User, { foreignKey: 'userid', as: 'user' });
-User.hasMany(Factura, { foreignKey: 'userid', as: 'facturas' });
+fs
+  .readdirSync(__dirname)
+  .filter(file => {
+    return (
+      file.indexOf('.') !== 0 &&
+      file !== basename &&
+      file.slice(-3) === '.js' &&
+      file.indexOf('.test.js') === -1
+    );
+  })
+  .forEach(file => {
+    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    db[model.name] = model;
+  });
 
-Measure.belongsTo(User, { foreignKey: 'take_by', as: 'taker' });
-User.hasMany(Measure, { foreignKey: 'take_by', as: 'measures' });
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
 
-Measure.belongsTo(Meter, { foreignKey: 'meter', as: 'measured_meter' });
-Meter.hasMany(Measure, { foreignKey: 'meter', as: 'measures' });
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-User.belongsToMany(Group, { through: 'Users_groups', foreignKey: 'userid', otherKey: 'groupid', timestamps: false });
-Group.belongsToMany(User, { through: 'Users_groups', foreignKey: 'groupid', otherKey: 'userid', timestamps: false });
-
-UserTokens.belongsTo(User, { foreignKey: 'userid', as: 'user' });
-User.hasMany(UserTokens, { foreignKey: 'userid', as: 'tokens' });
-
-module.exports = {
-  sequelize,
-  User,
-  Meter,
-  Factura,
-  Measure,
-  Group,
-  UserTokens
-};
+module.exports = db;

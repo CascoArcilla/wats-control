@@ -7,11 +7,12 @@ hide circle
 entity "User" as user {
   + id [PK] : int <<auto_increment>>
   --
-  * name : varchar(255)
-  * lastname : varchar(255)
+  * first_name : varchar(255)
+  * last_name : varchar(255)
   * username : varchar(255) <<unique>>
-  password : varchar(255) <<NULL>>
-  * created : date
+  + password : varchar(255) <<NULL>>
+  * createdAt : date = Now()
+  * updatedAt : date = Now()
   * is_bloked : boolean = false
   * use_password : boolean = false
 }
@@ -20,29 +21,31 @@ entity "Meter" as meter {
   + id [PK] : int <<auto_increment>>
   --
   * number_meter : int
-  * owner_meter : int <<FK>>
-  * status_meter : varchar(60) = 'active'
+  * userId : int <<FK>>
+  * status_meter : enum('active', 'inactive') = 'active'
 }
 
-entity "Factura" as factura {
+entity "Bill" as bill {
   + id [PK] : int <<auto_increment>>
   --
   * estimated_amount : double
   * watts_consumed : double
-  * created : date
   * start_date : date
   * end_date : date
-  * meterid : int <<FK>>
-  * userid : int <<FK>>
+  * meterId : int <<FK>>
+  * userId : int <<FK>>
+  * createdAt : date = Now()
+  * updatedAt : date = Now()
 }
 
 entity "Measure" as measure {
   + id [PK] : int <<auto_increment>>
   --
   * watts : int
-  * date_taken : date
-  * take_by : int <<FK>>
-  * meter : int <<FK>>
+  * meterId : int <<FK>>
+  * userId : int <<FK>>
+  * createdAt : date = Now()
+  * updatedAt : date = Now()
 }
 
 entity "Group" as group {
@@ -56,25 +59,26 @@ entity "User_tokens" as token {
   --
   * token : text
   * expires_at : date
-  * created_at : date
+  * createdAt : date = Now()
+  * updatedAt : date = Now()
   * is_revoked : boolean = false
-  * userid : int <<FK>>
+  * userId : int <<FK>>
 }
 
 ' Tablas Intermedias (Many-to-Many)
 entity "Users_groups" as user_group {
-  + userid [PK][FK] : int
-  + groupid [PK][FK] : int
+  + userId [PK][FK] : int
+  + groupId [PK][FK] : int
 }
 
 entity "User_meters" as user_meter {
-  + userid [PK][FK] : int
-  + meterid [PK][FK] : int
+  + userId [PK][FK] : int
+  + meterId [PK][FK] : int
 }
 
 ' Relaciones basadas en los ALTER TABLE
 user ||--o{ token
-user ||--o{ factura
+user ||--o{ bill
 user ||--o{ meter
 user ||--o{ measure
 user ||--o{ user_group
@@ -82,7 +86,7 @@ user ||--o{ user_meter
 
 group ||--o{ user_group
 
-meter ||--o{ factura
+meter ||--o{ bill
 meter ||--o{ measure
 meter ||--o{ user_meter
 
