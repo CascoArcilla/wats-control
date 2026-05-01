@@ -1,8 +1,10 @@
 import { Zap, Plus, BarChart2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export default function MetersMain() {
-  const isAdmin = true;
+  const { hasRole } = useAuth();
+  const canAddMeter = hasRole('Administrador');
 
   const meters = [
     { id: 1, number: '100456', name: 'María López', status: 'Activo', lastReading: '12,450', date: '28/04/2026' },
@@ -15,9 +17,9 @@ export default function MetersMain() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">Medidores</h1>
-          <p className="text-gray-400 text-sm mt-1">Gestiona los medidores asociados a tu cuenta.</p>
+          <p className="text-gray-400 text-sm mt-1">Medidores asociados a tu cuenta</p>
         </div>
-        {isAdmin && (
+        {canAddMeter && (
           <Link to="/meters/register" className="btn-primary flex items-center space-x-2">
             <Plus className="w-4 h-4" />
             <span>Añadir Medidor</span>

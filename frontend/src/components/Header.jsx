@@ -1,10 +1,21 @@
 import { User } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Header() {
   const location = useLocation();
+  const { user, hasRole } = useAuth();
 
-  const isAdmin = true;
+  const { first_name, last_name } = user;
+  
+  let names = '';
+  if (!first_name && !last_name) {
+    names = 'Sin Nombre';
+  } else {
+    names = `${first_name}${last_name ? ` ${last_name}` : ''}`;
+  }
+  
+  const isAdmin = hasRole('Administrador');
   
   const titles = {
     '/admin': 'Dashboard Admin',
@@ -26,7 +37,7 @@ export default function Header() {
       <div className="flex items-center space-x-6">
         <div className="flex items-center space-x-3 cursor-pointer group">
           <div className="text-right hidden sm:block">
-            <p className="text-sm font-medium text-white group-hover:text-light-mint transition-colors">Usuario Demo</p>
+            <p className="text-sm font-medium text-white group-hover:text-light-mint transition-colors">{names}</p>
             <p className="text-xs text-gray-400">{isAdmin ? 'Admin' : 'Usuario'}</p>
           </div>
           <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-medium-green to-light-mint flex items-center justify-center text-darkest shadow-md">
