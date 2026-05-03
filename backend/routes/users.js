@@ -12,4 +12,10 @@ router.get('/', ...adminOnly, userController.getUsers);
 // Groups list (for the form checklist) — also admin only
 router.get('/groups', ...adminOnly, userController.getGroups);
 
+// Update user data — admin only
+router.patch('/:id', ...adminOnly, userController.updateUser);
+
+// Update user groups — admin only
+router.put('/:id/groups', ...adminOnly, userController.updateUserGroups);
+
 module.exports = router;
