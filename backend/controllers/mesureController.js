@@ -52,16 +52,12 @@ exports.getMeasures = async (req, res) => {
 
     // Filter by date
     if (date) {
-      const startOfDay = new Date(date);
-      startOfDay.setHours(0, 0, 0, 0);
-      const endOfDay = new Date(date);
-      endOfDay.setHours(23, 59, 59, 999);
+      const startOfDay = new Date(date).toISOString().split('T')[0] + 'T00:00:00.000Z';
+      const endOfDay = new Date(date).toISOString().split('T')[0] + 'T23:59:59.999Z';
       where.createdAt = { [Op.between]: [startOfDay, endOfDay] };
     } else if (startDate && endDate) {
-      const start = new Date(startDate);
-      start.setHours(0, 0, 0, 0);
-      const end = new Date(endDate);
-      end.setHours(23, 59, 59, 999);
+      const start = new Date(startDate).toISOString().split('T')[0] + 'T00:00:00.000Z';
+      const end = new Date(endDate).toISOString().split('T')[0] + 'T23:59:59.999Z';
       where.createdAt = { [Op.between]: [start, end] };
     }
 

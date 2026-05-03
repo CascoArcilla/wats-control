@@ -24,8 +24,7 @@ export default function Today() {
     setLoading(true);
     setError('');
     try {
-      const today = new Date().toISOString().split('T')[0];
-      console.log(today);
+      const today = new Date();
       const params = {
         date: today,
         page,
