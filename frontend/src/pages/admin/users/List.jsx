@@ -3,8 +3,11 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {
   Users, UserPlus, ChevronLeft, ChevronRight,
-  Shield, Eye, EyeOff, AlertCircle, RefreshCw
+  Shield, Eye, EyeOff, AlertCircle, RefreshCw,
+  Edit, ShieldAlert
 } from 'lucide-react';
+import EditUserModal from './EditUserModal';
+import EditGroupsModal from './EditGroupsModal';
 
 const GROUP_COLORS = {
   'Administrador': 'bg-purple-500/15 text-purple-300 border-purple-500/30',
@@ -28,6 +31,12 @@ export default function UserList() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const [availableGroups, setAvailableGroups] = useState([]);
+
+  // Modals state
+  const [editingUser, setEditingUser] = useState(null);
+  const [editingGroupsUser, setEditingGroupsUser] = useState(null);
+
   const fetchUsers = useCallback(async (page = 1) => {
     setLoading(true);
     setError('');
@@ -44,7 +53,10 @@ export default function UserList() {
 
   useEffect(() => {
     fetchUsers(1);
-  }, []);
+    axios.get('/users/groups')
+      .then(res => setAvailableGroups(res.data.groups))
+      .catch(() => console.error('No se pudieron cargar los grupos.'));
+  }, [fetchUsers]);
 
   const goToPage = (page) => {
     if (page < 1 || page > pagination.totalPages) return;
@@ -98,12 +110,13 @@ export default function UserList() {
                 <th className="text-left px-6 py-4 text-gray-400 font-semibold">Username</th>
                 <th className="text-left px-6 py-4 text-gray-400 font-semibold">Grupos</th>
                 <th className="text-center px-6 py-4 text-gray-400 font-semibold">Contraseña</th>
+                <th className="text-right px-6 py-4 text-gray-400 font-semibold">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {loading && (
                 <tr>
-                  <td colSpan={4} className="text-center py-12">
+                  <td colSpan={5} className="text-center py-12">
                     <div className="flex flex-col items-center gap-3 text-gray-500">
                       <div className="w-8 h-8 border-2 border-light-mint border-t-transparent rounded-full animate-spin" />
                       <span>Cargando usuarios...</span>
@@ -113,7 +126,7 @@ export default function UserList() {
               )}
               {!loading && users.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="text-center py-12 text-gray-500">
+                  <td colSpan={5} className="text-center py-12 text-gray-500">
                     No hay usuarios registrados.
                   </td>
                 </tr>
@@ -153,6 +166,22 @@ export default function UserList() {
                       : <EyeOff className="w-4 h-4 text-gray-600 mx-auto" title="Sin contraseña" />
                     }
                   </td>
+                  <td className="px-6 py-4 text-right space-x-2">
+                    <button
+                      onClick={() => setEditingUser(user)}
+                      className="p-2 bg-dark/50 hover:bg-light-mint hover:text-darkest text-light-mint rounded-lg transition-colors inline-flex"
+                      title="Editar Usuario"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setEditingGroupsUser(user)}
+                      className="p-2 bg-dark/50 hover:bg-medium-green hover:text-white text-medium-green rounded-lg transition-colors inline-flex"
+                      title="Gestionar Grupos"
+                    >
+                      <ShieldAlert className="w-4 h-4" />
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -175,7 +204,6 @@ export default function UserList() {
                 <ChevronLeft className="w-5 h-5" />
               </button>
 
-              {/* Page numbers */}
               {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
                 .filter(p => Math.abs(p - pagination.page) <= 2)
                 .map(p => (
@@ -206,6 +234,19 @@ export default function UserList() {
           </div>
         )}
       </div>
+
+      <EditUserModal
+        user={editingUser}
+        onClose={() => setEditingUser(null)}
+        onSuccess={() => fetchUsers(pagination.page)}
+      />
+
+      <EditGroupsModal
+        user={editingGroupsUser}
+        availableGroups={availableGroups}
+        onClose={() => setEditingGroupsUser(null)}
+        onSuccess={() => fetchUsers(pagination.page)}
+      />
     </div>
   );
 }
