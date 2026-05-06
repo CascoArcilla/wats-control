@@ -28,9 +28,7 @@ const setCookies = (res, accessToken, refreshToken) => {
 };
 
 exports.login = async (req, res) => {
-  try {
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    
+  try {    
     const { username, password } = req.body;
 
     if (!username || !password) {
