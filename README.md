@@ -19,6 +19,7 @@ Es un proyecto personal para llevar el control del consumo de KW/h y el pago del
 - MySQL
 - JWT (con refresh tokens)
 - React con Vite
+- Docker
 
 ## Sobre este repositorio
 Este repositorio se inicio con el prompt [Promt-Inicial.md](./Promt-Inicial.md) indicando que solo genere las primeras vistas, a partir de ahí se fueron agregando o cambiando algunos elementos de la aplicación hasta llegar al estado actual. Se recrearon los modelos con el CLI de Sequelize para generar migraciones y llevar un mejor control de los cambios en la base de datos.
@@ -69,3 +70,8 @@ node scripts/createUser.js <nomre de usuario> <password> <grupo>
 - `2 - Propietario`: Puede ser usado para ser cargo del servicio de luz. Puede ver y agregar consumos de su medidor asignado asi como los permitidos
 
 Tambien es posible crear un usuario admin rapidamente si se configuran las variables en el archivo `.env` del backend (EC_SYS_USERNAME, EC_SYS_PASSWORD) y ejecutar `node scripts/createAdminUser.js`.
+
+## Dockerfile
+El dockerfile creado en la raiz permite crear una imagen del backend y construyecndo el frontend de la aplicacion (build). La app de express sirve el app de react (dist) en un solo contenedor. El dockerfile usa el mismo entripoint del backend `entrypoint.sh`, que se encarga de hacer las migraciones como seeders si es necesario, ademas de crear el primer usuario asministrador si las variables de entorno EC_SYS_USERNAME y EC_SYS_PASSWORD estan definidas.
+
+Se debe tener en cuenta que a la hora de correr el contenedor se deben especificar los puertos a los que se quiere exponer y usar el archivo .env para configurar las variables de entorno del backend. Tambien, si dedesa usar el mimso contenedor de mysql que se usa en el compose, debes pasar la network creada por docker que se especifica en el compose. Si no se especifica la network, no se podra comunicar con la base de datos.
