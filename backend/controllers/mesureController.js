@@ -30,8 +30,11 @@ const getAccessibleMeterIds = async (userId, userGroups) => {
 
 exports.getMeasures = async (req, res) => {
   try {
-    const { page = 1, limit = 10, meterId, date, startDate, endDate } = req.query;
+    const { page = 1, limit = 10, meterId, date, startDate, endDate, timezoneOffset = 0 } = req.query;
     const offset = (page - 1) * limit;
+
+    // Convert timezoneOffset from minutes to milliseconds and invert it
+    const offsetInMs = parseInt(timezoneOffset) * 60000 * -1;
 
     const accessibleMeterIds = await getAccessibleMeterIds(req.userId, req.userGroups);
 
@@ -50,29 +53,47 @@ exports.getMeasures = async (req, res) => {
       where.meterId = meterId;
     }
 
+    // Helper function to get UTC start and end of a local day
+    const getUtcBounds = (dateStr, offsetMs) => {
+      const d = new Date(dateStr);
+      // d is typically UTC 00:00:00 for "YYYY-MM-DD"
+      const utcStart = d.getTime() + offsetMs;
+      const utcEnd = utcStart + (24 * 60 * 60 * 1000) - 1;
+      return {
+        start: new Date(utcStart).toISOString(),
+        end: new Date(utcEnd).toISOString()
+      };
+    };
+
     // Filter by date
     if (date) {
-      const startOfDay = new Date(date).toISOString().split('T')[0] + 'T00:00:00.000Z';
-      const endOfDay = new Date(date).toISOString().split('T')[0] + 'T23:59:59.999Z';
-      where.createdAt = { [Op.between]: [startOfDay, endOfDay] };
+      const { start, end } = getUtcBounds(date, offsetInMs);
+      where.createdAt = { [Op.between]: [start, end] };
     } else if (startDate && endDate) {
-      const start = new Date(startDate).toISOString().split('T')[0] + 'T00:00:00.000Z';
-      const end = new Date(endDate).toISOString().split('T')[0] + 'T23:59:59.999Z';
+      const { start } = getUtcBounds(startDate, offsetInMs);
+      const { end } = getUtcBounds(endDate, offsetInMs);
       where.createdAt = { [Op.between]: [start, end] };
     }
 
     const { count, rows } = await Measure.findAndCountAll({
       where,
       include: [
-        { model: Meter, attributes: ['number_meter'] },
-        { model: User, attributes: ['first_name', 'last_name', 'username'] }
+        {
+          model: Meter,
+          attributes: ['number_meter', 'userId'],
+          include: [{ model: User, attributes: ['username', 'first_name', 'last_name'] }]
+        },
+        {
+          model: User,
+          attributes: ['first_name', 'last_name', 'username']
+        }
       ],
       limit: parseInt(limit),
       offset: parseInt(offset),
       order: [['createdAt', 'DESC']]
     });
 
-    res.json({
+    const responseJson = {
       measures: rows,
       pagination: {
         total: count,
@@ -80,7 +101,31 @@ exports.getMeasures = async (req, res) => {
         limit: parseInt(limit),
         totalPages: Math.ceil(count / limit)
       }
-    });
+    };
+
+    // Calculate the meter's consumption from the indicate date
+    if (date && meterId) {
+      const kwhToday = parseInt(rows[0]?.watts) || null;
+
+      const { start: startDayUtc } = getUtcBounds(date, offsetInMs);
+      // Find the more recent measure before the indicate date
+      const lastMeasure = await Measure.findOne({
+        where: {
+          meterId,
+          createdAt: { [Op.lt]: startDayUtc }
+        },
+        order: [['createdAt', 'DESC']]
+      });
+
+      if (kwhToday && lastMeasure) {
+        const consumption = parseInt(kwhToday) - parseInt(lastMeasure.watts);
+        responseJson.consumption = consumption;
+        responseJson.referenceDate = lastMeasure?.createdAt || null;
+        responseJson.referenceKwh = lastMeasure?.watts || null;
+      }
+    }
+
+    res.json(responseJson);
   } catch (error) {
     console.error('getMeasures error:', error);
     res.status(500).json({ message: 'Error interno del servidor.' });

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { UserIcon, Plus, Filter, ChevronLeft, ChevronRight, Zap, RefreshCw, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import ItemRegister from './ItemRegister';
 
 export default function Today() {
   const [measures, setMeasures] = useState([]);
@@ -24,18 +25,18 @@ export default function Today() {
     setLoading(true);
     setError('');
     try {
-      const today = new Date();
       const params = {
-        date: today,
+        date: new Date(),
         page,
         limit: 10,
+        timezoneOffset: new Date().getTimezoneOffset(),
         meterId: selectedMeter || undefined
       };
       const res = await axios.get('/consumptions', { params });
       setMeasures(res.data.measures);
       setPagination(res.data.pagination);
     } catch (err) {
-      setError('No se pudieron cargar los consumos de hoy.');
+      setError('No se pudieron cargar los registros de hoy.');
     } finally {
       setLoading(false);
     }
@@ -59,8 +60,8 @@ export default function Today() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Consumo de Hoy</h1>
-          <p className="text-gray-400 text-sm mt-1">Aquí puedes ver el consumo registrado en el día.</p>
+          <h1 className="text-2xl font-bold text-white">Registros de Hoy</h1>
+          <p className="text-gray-400 text-sm mt-1">Aquí puedes ver los registros de consumo en el día.</p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
@@ -122,26 +123,7 @@ export default function Today() {
           </div>
         ) : (
           <div className="space-y-4">
-            {measures.map((measure) => (
-              <div key={measure.id} className="flex items-center justify-between p-4 bg-darkest/30 rounded-lg border border-gray-green/10 hover:border-light-mint/20 transition-colors">
-                <div className="flex items-center space-x-4">
-                  <div className="w-10 h-10 rounded-full bg-dark flex items-center justify-center shrink-0">
-                    <UserIcon className="w-5 h-5 text-light-mint" />
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">Medición registrada</p>
-                    <p className="text-sm text-gray-400">
-                      Usuario <span className="text-light-mint font-semibold">@{measure.User.username}</span> registró <span className="text-white font-bold">{measure.watts} kW/h</span> en el medidor <span className="text-white">#{measure.Meter.number_meter}</span>
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <span className="text-xs text-gray-500 block">
-                    {new Date(measure.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                </div>
-              </div>
-            ))}
+            {measures.map((measure) => <ItemRegister key={measure.id} measure={measure} />)}
           </div>
         )}
 
