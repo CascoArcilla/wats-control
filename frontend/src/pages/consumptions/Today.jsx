@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { UserIcon, Plus, Filter, ChevronLeft, ChevronRight, Zap, RefreshCw, AlertCircle } from 'lucide-react';
+import { UserIcon, Plus, Filter, Zap, RefreshCw, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ItemRegister from './ItemRegister';
+import Pagination from './Pagination';
 
 export default function Today() {
   const [measures, setMeasures] = useState([]);
@@ -123,6 +124,11 @@ export default function Today() {
           </div>
         )}
 
+        {/* Pagination */}
+        {!loading && pagination.totalPages > 1 && (
+          <Pagination measures={measures} pagination={pagination} handlePageChange={handlePageChange} isTop={true} />
+        )}
+
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
@@ -145,30 +151,7 @@ export default function Today() {
 
         {/* Pagination */}
         {!loading && pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-green/10">
-            <p className="text-sm text-gray-500">
-              Mostrando {measures.length} de {pagination.total} registros
-            </p>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => handlePageChange(pagination.page - 1)}
-                disabled={pagination.page === 1}
-                className="p-2 rounded-lg text-gray-400 hover:text-light-mint hover:bg-dark/50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <span className="text-sm text-white font-medium px-3">
-                {pagination.page} / {pagination.totalPages}
-              </span>
-              <button
-                onClick={() => handlePageChange(pagination.page + 1)}
-                disabled={pagination.page === pagination.totalPages}
-                className="p-2 rounded-lg text-gray-400 hover:text-light-mint hover:bg-dark/50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
+          <Pagination measures={measures} pagination={pagination} handlePageChange={handlePageChange} />
         )}
       </div>
     </div>
