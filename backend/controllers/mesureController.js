@@ -119,9 +119,11 @@ exports.getMeasures = async (req, res) => {
 
       if (kwhToday && lastMeasure) {
         const consumption = parseInt(kwhToday) - parseInt(lastMeasure.watts);
-        responseJson.consumption = consumption;
-        responseJson.referenceDate = lastMeasure?.createdAt || null;
-        responseJson.referenceKwh = lastMeasure?.watts || null;
+        responseJson.consumption = {
+          kwh: consumption,
+          referenceDate: lastMeasure?.createdAt || null,
+          referenceKwh: lastMeasure?.watts || null
+        }
       }
     }
 

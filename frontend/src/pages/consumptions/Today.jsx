@@ -11,6 +11,7 @@ export default function Today() {
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [consumption, setConsumption] = useState({ kwh: 0, referenceDate: null, referenceKwh: null });
 
   const fetchMeters = async () => {
     try {
@@ -35,6 +36,7 @@ export default function Today() {
       const res = await axios.get('/consumptions', { params });
       setMeasures(res.data.measures);
       setPagination(res.data.pagination);
+      setConsumption(res.data.consumption);
     } catch (err) {
       setError('No se pudieron cargar los registros de hoy.');
     } finally {
@@ -98,7 +100,21 @@ export default function Today() {
         </select>
       </div>
 
-      {/* Content */}
+      {/* Consumption Card */}
+      {consumption && consumption.kwh && (
+        <div className="glass-card p-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-gray-400">
+              <Zap className="w-4 h-4" />
+              <span className="text-md text-gray-300">Consumo:</span>
+            </div>
+            <p className="text-xl font-bold text-white">{consumption.kwh} kWh</p>
+          </div>
+          <p className="text-sm text-gray-400">Desde: {new Date(consumption.referenceDate).toLocaleDateString()} ({consumption.referenceKwh} kWh)</p>
+        </div>
+      )}
+
+      {/* Results */}
       <div className="glass-card">
         {error && (
           <div className="flex items-center gap-3 bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-6">
