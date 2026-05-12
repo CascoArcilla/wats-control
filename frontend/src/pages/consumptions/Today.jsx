@@ -89,12 +89,12 @@ export default function Today() {
         <select
           value={selectedMeter}
           onChange={(e) => setSelectedMeter(e.target.value)}
-          className="input-field max-w-[200px] py-1.5 text-sm"
+          className="input-field w-full sm:w-auto py-1.5 text-sm"
         >
           <option value="">Todos los medidores</option>
           {meters.map((meter) => (
             <option key={meter.id} value={meter.id} className="bg-darkest text-white">
-              Medidor #{meter.number_meter}
+              Medidor #{meter.number_meter} - {meter.User?.first_name} {meter.User?.last_name}
             </option>
           ))}
         </select>

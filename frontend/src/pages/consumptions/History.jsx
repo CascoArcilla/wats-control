@@ -98,7 +98,7 @@ export default function History() {
               <option value="">Todos los medidores</option>
               {meters.map((meter) => (
                 <option key={meter.id} value={meter.id} className="bg-darkest text-white">
-                  Medidor #{meter.number_meter}
+                  Medidor #{meter.number_meter} - {meter.User?.first_name} {meter.User?.last_name}
                 </option>
               ))}
             </select>
