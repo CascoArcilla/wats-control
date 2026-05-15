@@ -69,7 +69,6 @@ export default function MobileNav() {
         </button>
       </div>
 
-      <div className="h-20" />
 
       {/* Backdrop overlay */}
       {isOpen && (

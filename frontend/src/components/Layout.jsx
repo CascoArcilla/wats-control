@@ -12,7 +12,7 @@ export default function Layout() {
         <div className="hidden md:block">
           <Header />
         </div>
-        <main className="flex-1 overflow-y-auto p-6 scroll-smooth">
+        <main className="flex-1 overflow-y-auto p-6 md:pb-6 pb-24 scroll-smooth">
           <div className="max-w-7xl mx-auto">
             <Outlet />
           </div>
